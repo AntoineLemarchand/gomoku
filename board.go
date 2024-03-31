@@ -6,15 +6,26 @@ import (
 	"golang.org/x/exp/shiny/materialdesign/colornames"
 )
 
+const (
+	COLOR_BLACK = 1
+	COLOR_WHITE = 2
+)
+
+type stone struct {
+	x, y  int
+	color int
+}
+
 type board struct {
 	size      int
 	pad       int
 	cellSize  int
 	lineWidth int
+	stones    []stone
 }
 
 func newBoard(size, pad, cellSize, lineWidth int) *board {
-	return &board{size, pad, cellSize, lineWidth}
+	return &board{size, pad, cellSize, lineWidth, []stone{}}
 }
 
 func (b *board) draw(screen *ebiten.Image) {
@@ -36,10 +47,23 @@ func (b *board) cellCenter(x, y int) (int, int) {
 	return x*b.cellSize + b.cellSize/2 + b.pad*b.cellSize, y*b.cellSize + b.cellSize/2 + b.pad*b.cellSize
 }
 
+func (b *board) isCellTaken(x, y int) bool {
+	for _, s := range b.stones {
+		if s.x == x && s.y == y {
+			return true
+		}
+	}
+	return false
+}
+
 func (b *board) previewStone(x, y int, screen *ebiten.Image) {
 	cell_x_id, cell_y_id := b.cellAt(x, y)
 	if (cell_x_id >= 0 && cell_x_id < boardSize) && (cell_y_id >= 0 && cell_y_id < boardSize) {
 		cell_x, cell_y := b.cellCenter(cell_x_id, cell_y_id)
-		vector.DrawFilledCircle(screen, float32(cell_x), float32(cell_y), cellSize/2-2, colornames.Green400, true)
+		var preview_color = colornames.Blue400
+		if b.isCellTaken(cell_x_id, cell_y_id) {
+			preview_color = colornames.Red400
+		}
+		vector.DrawFilledCircle(screen, float32(cell_x), float32(cell_y), cellSize/2-2, preview_color, true)
 	}
 }
