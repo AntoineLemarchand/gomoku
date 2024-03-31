@@ -15,7 +15,6 @@ const (
 
 var (
 	board = newBoard(boardSize, boardPad, cellSize, 2)
-	turn  = COLOR_BLACK
 )
 
 type Game struct {
