@@ -16,19 +16,20 @@ type stone struct {
 	color int
 }
 
-type board struct {
+type Board struct {
 	size      int
 	pad       int
 	cellSize  int
 	lineWidth int
 	stones    []stone
+	turn      int
 }
 
-func newBoard(size, pad, cellSize, lineWidth int) *board {
-	return &board{size, pad, cellSize, lineWidth, []stone{}}
+func newBoard(size, pad, cellSize, lineWidth int) *Board {
+	return &Board{size, pad, cellSize, lineWidth, []stone{}, COLOR_BLACK}
 }
 
-func (b *board) draw(screen *ebiten.Image) {
+func (b *Board) draw(screen *ebiten.Image) {
 	screen.Fill(colornames.Amber100)
 
 	for i := 0; i <= b.size; i++ {
@@ -37,17 +38,26 @@ func (b *board) draw(screen *ebiten.Image) {
 		vector.StrokeLine(screen, x, y, x, y+float32(b.size*b.cellSize), float32(b.lineWidth), colornames.Grey900, true)
 		vector.StrokeLine(screen, y, x, y+float32(b.size*b.cellSize), x, float32(b.lineWidth), colornames.Grey900, true)
 	}
+
+	for _, s := range b.stones {
+		x, y := b.cellCenter(s.x, s.y)
+		var color = colornames.Black
+		if s.color == COLOR_WHITE {
+			color = colornames.White
+		}
+		vector.DrawFilledCircle(screen, float32(x), float32(y), float32(b.cellSize/2-2), color, true)
+	}
 }
 
-func (b *board) cellAt(x, y int) (int, int) {
+func (b *Board) cellAt(x, y int) (int, int) {
 	return (x - b.pad*b.cellSize) / b.cellSize, (y - b.pad*b.cellSize) / b.cellSize
 }
 
-func (b *board) cellCenter(x, y int) (int, int) {
+func (b *Board) cellCenter(x, y int) (int, int) {
 	return x*b.cellSize + b.cellSize/2 + b.pad*b.cellSize, y*b.cellSize + b.cellSize/2 + b.pad*b.cellSize
 }
 
-func (b *board) isCellTaken(x, y int) bool {
+func (b *Board) isCellTaken(x, y int) bool {
 	for _, s := range b.stones {
 		if s.x == x && s.y == y {
 			return true
@@ -56,7 +66,19 @@ func (b *board) isCellTaken(x, y int) bool {
 	return false
 }
 
-func (b *board) previewStone(x, y int, screen *ebiten.Image) {
+func (b *Board) placeStone(x, y int) {
+	if b.isCellTaken(x, y) {
+		return
+	}
+	b.stones = append(b.stones, stone{x, y, b.turn})
+	if b.turn == COLOR_BLACK {
+		b.turn = COLOR_WHITE
+	} else {
+		b.turn = COLOR_BLACK
+	}
+}
+
+func (b *Board) previewStone(x, y int, screen *ebiten.Image) {
 	cell_x_id, cell_y_id := b.cellAt(x, y)
 	if (cell_x_id >= 0 && cell_x_id < boardSize) && (cell_y_id >= 0 && cell_y_id < boardSize) {
 		cell_x, cell_y := b.cellCenter(cell_x_id, cell_y_id)

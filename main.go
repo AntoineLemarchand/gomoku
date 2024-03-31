@@ -13,16 +13,27 @@ const (
 	cellSize  = 40
 )
 
+var (
+	board = newBoard(boardSize, boardPad, cellSize, 2)
+	turn  = COLOR_BLACK
+)
+
 type Game struct {
 	vector *vector.Path
 }
 
 func (g *Game) Update() error {
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+		x, y := ebiten.CursorPosition()
+		if x >= boardPad*cellSize && x < (boardSize+boardPad)*cellSize && y >= boardPad*cellSize && y < (boardSize+boardPad)*cellSize {
+			x, y = board.cellAt(x, y)
+			board.placeStone(x, y)
+		}
+	}
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	var board = newBoard(boardSize, boardPad, cellSize, 2)
 	board.draw(screen)
 	x, y := ebiten.CursorPosition()
 	board.previewStone(x, y, screen)
