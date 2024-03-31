@@ -24,6 +24,8 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	var board = newBoard(boardSize, boardPad, cellSize, 2)
 	board.draw(screen)
+	x, y := ebiten.CursorPosition()
+	board.previewStone(x, y, screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
