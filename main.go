@@ -4,28 +4,37 @@ import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
-type Game struct{}
+const (
+	boardSize = 15
+	boardPad  = 2
+	cellSize  = 40
+)
+
+type Game struct {
+	vector *vector.Path
+}
 
 func (g *Game) Update() error {
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	ebitenutil.DebugPrint(screen, "Hello, World!")
+	var board = newBoard(boardSize, boardPad, cellSize, 2)
+	board.draw(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return 320, 240
+	return (boardSize + boardPad*2) * cellSize, (boardSize + boardPad*2) * cellSize
 }
 
 func main() {
-	ebiten.SetWindowSize(640, 480)
+	ebiten.SetWindowSize((boardSize+boardPad*2)*cellSize, (boardSize+boardPad*2)*cellSize)
 	ebiten.SetWindowTitle("Gomoku")
+
 	if err := ebiten.RunGame(&Game{}); err != nil {
 		log.Fatal(err)
 	}
 }
-
