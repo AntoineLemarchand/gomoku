@@ -50,11 +50,12 @@ func (b *Board) draw(screen *ebiten.Image) {
 }
 
 func (b *Board) cellAt(x, y int) (int, int) {
-	return (x - b.pad*b.cellSize) / b.cellSize, (y - b.pad*b.cellSize) / b.cellSize
+  // get the closest intersection point
+  return (x + b.cellSize/2) / b.cellSize - b.pad, (y + b.cellSize/2) / b.cellSize - b.pad
 }
 
 func (b *Board) cellCenter(x, y int) (int, int) {
-	return x*b.cellSize + b.cellSize/2 + b.pad*b.cellSize, y*b.cellSize + b.cellSize/2 + b.pad*b.cellSize
+	return x*b.cellSize + b.pad*b.cellSize, y*b.cellSize + b.pad*b.cellSize
 }
 
 func (b *Board) isCellTaken(x, y int) bool {
