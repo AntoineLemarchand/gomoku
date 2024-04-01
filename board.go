@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"golang.org/x/exp/shiny/materialdesign/colornames"
 )
@@ -100,5 +99,4 @@ func (b *Board) previewStone(x, y int, screen *ebiten.Image) {
 		}
 		vector.DrawFilledCircle(screen, float32(cell_x), float32(cell_y), cellSize/2-2, preview_color, true)
 	}
-	ebitenutil.DebugPrint(screen, "x: "+string(cell_x_id)+" y: "+string(cell_y_id))
 }
