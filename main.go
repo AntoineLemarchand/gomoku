@@ -24,10 +24,7 @@ type Game struct {
 func (g *Game) Update() error {
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
-		if x >= boardPad*cellSize && x < (boardSize+boardPad)*cellSize && y >= boardPad*cellSize && y < (boardSize+boardPad)*cellSize {
-			x, y = board.cellAt(x, y)
-			board.placeStone(x, y)
-		}
+		board.placeStone(x, y)
 	}
 	return nil
 }
@@ -39,7 +36,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return (boardSize + boardPad*2) * cellSize, (boardSize + boardPad*2) * cellSize
+	return (boardSize*cellSize + boardPad*2), (boardSize*cellSize + boardPad*2)
 }
 
 func main() {
